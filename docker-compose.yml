@@ -1,0 +1,56 @@
+version: '3.9'
+
+services:
+  galera-node1:
+    image: mariadb:10.5
+    environment:
+      - MYSQL_ROOT_PASSWORD=rootpass
+      - MYSQL_DATABASE=booking
+    command:
+      [
+        "mysqld",
+        "--wsrep-new-cluster",
+        "--wsrep-cluster-name=my_galera_cluster",
+        "--wsrep-cluster-address=gcomm://",
+        "--wsrep-node-address=galera-node1",
+        "--wsrep-node-name=node1",
+        "--wsrep-on=ON",
+        "--wsrep-provider=/usr/lib/galera/libgalera_smm.so",
+        "--binlog-format=ROW"
+      ]
+    ports:
+      - "3307:3306"
+    volumes:
+      - db1:/var/lib/mysql
+
+  galera-node2:
+    image: mariadb:10.5
+    environment:
+      - MYSQL_ROOT_PASSWORD=rootpass
+      - MYSQL_DATABASE=booking
+    depends_on:
+      - galera-node1
+    command:
+      [
+        "mysqld",
+        "--wsrep-cluster-name=my_galera_cluster",
+        "--wsrep-cluster-address=gcomm://galera-node1",
+        "--wsrep-node-address=galera-node2",
+        "--wsrep-node-name=node2",
+        "--wsrep-on=ON",
+        "--wsrep-provider=/usr/lib/galera/libgalera_smm.so",
+        "--binlog-format=ROW"
+      ]
+    ports:
+      - "3308:3306"
+    volumes:
+      - db2:/var/lib/mysql
+
+  adminer:
+    image: adminer
+    ports:
+      - "8080:8080"
+
+volumes:
+  db1:
+  db2:

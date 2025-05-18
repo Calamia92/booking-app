@@ -1,40 +1,172 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/pages/api-reference/create-next-app).
+🟢 **Magnifique. Tout fonctionne parfaitement !**
+Ton projet a maintenant :
 
-## Getting Started
+* Un cluster MariaDB fonctionnel avec Galera
+* Des modèles Prisma propres (Event + Booking)
+* Des endpoints API opérationnels
+* Un système de réservation avec quota
+* Un taux de remplissage calculé dynamiquement
 
-First, run the development server:
+---
+
+## 📄 Étape finale : `README.md` prêt pour rendu
+
+Voici un modèle **minimaliste, propre et pro**, que tu peux coller à la racine du projet :
+
+````markdown
+# 🎟️ Booking App — TP Architecture Logicielle & Cluster SGBD
+
+Application de réservation d’événements (concerts, conférences, expositions) avec cluster MariaDB Galera.
+
+---
+
+## 🚀 Fonctionnalités
+
+- Liste des événements avec taux de remplissage
+- Réservation d'une place si l'événement n'est pas complet
+- Mise à jour temps réel via API
+- Stockage en cluster MariaDB (Galera) pour haute disponibilité
+
+---
+
+## ⚙️ Stack technique
+
+- Next.js (API REST)
+- TypeScript
+- Prisma ORM
+- MariaDB Galera Cluster (Docker)
+- Adminer (interface DB)
+
+---
+
+## 🐳 Lancer le projet
+
+### 1. Cloner le repo et installer les dépendances
+
+```bash
+npm install
+````
+
+### 2. Lancer le cluster Galera
+
+```bash
+docker-compose up -d
+```
+
+### 3. Vérifier la connexion dans `.env`
+
+```env
+DATABASE_URL="mysql://root:rootpass@127.0.0.1:3307/booking"
+```
+
+### 4. Migrer la base + seed
+
+```bash
+npx prisma migrate dev --name init
+npx prisma db seed
+```
+
+### 5. Lancer le serveur Next.js
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+---
 
-You can start editing the page by modifying `pages/index.tsx`. The page auto-updates as you edit the file.
+## 🔗 Endpoints API
 
-[API routes](https://nextjs.org/docs/pages/building-your-application/routing/api-routes) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.ts`.
+| Endpoint                    | Méthode | Description                        |
+| --------------------------- | ------- | ---------------------------------- |
+| `/api/events`               | GET     | Liste des événements               |
+| `/api/book`                 | POST    | Réserver une place                 |
+| `/api/events/:id/fill-rate` | GET     | Taux de remplissage de l’événement |
 
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/pages/building-your-application/routing/api-routes) instead of React pages.
+---
 
-This project uses [`next/font`](https://nextjs.org/docs/pages/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## 📤 Exemple de requête POST
 
-## Learn More
+```http
+POST /api/book
+Content-Type: application/json
 
-To learn more about Next.js, take a look at the following resources:
+{
+  "eventId": 1
+}
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn-pages-router) - an interactive Next.js tutorial.
+Réponse attendue :
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```json
+{
+  "message": "Réservation confirmée",
+  "booking": {
+    "id": 1,
+    "eventId": 1,
+    "createdAt": "..."
+  }
+}
+```
+---
 
-## Deploy on Vercel
+## 🛠️ Résilience et gestion d’erreurs
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- Les cas d’erreurs sont gérés proprement avec `try/catch` (ex : événement complet, mauvais ID).
+- Un message explicite est renvoyé à l’utilisateur (`400`, `404`, `500` selon le cas).
+- Un `console.warn` logge les tentatives sur événements pleins pour audit.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/pages/building-your-application/deploying) for more details.
+---
+
+## 🖼️ Capture d’écran
+
+![Vue Events](./public/screenshot/test-api-events.png)
+---
+
+### 📌 Respect des principes d’architecture (KISS, DDD, SOLID)
+
+#### ✅ KISS
+
+* Architecture simple, monolithique mais bien découpée (API, domaine, seed)
+* Pas de complexité inutile, logique métier lisible en moins de 100 lignes
+
+#### ✅ DDD (Domain-Driven Design)
+
+* **Ubiquitous Language** : termes métier clairs (event, booking, capacity, fill rate)
+* **Bounded Context** : logique de réservation et logique d’événement séparées dans les routes `/api/book` et `/api/events`
+* **Eventual consistency** démontrée avec `/fill-rate` calculé dynamiquement
+
+#### ✅ SOLID (focalisé sur le "S")
+
+* **S — Single Responsibility Principle** respecté :
+
+    * Chaque route API ne fait qu’une seule chose (ex: réserver, calculer un taux, retourner une liste)
+    * La logique métier est séparée de l’affichage (pas de UI dans l’API)
+
+#### ✅ Choix techniques motivés (cf. `ADR.md`)
+
+* Prisma choisi pour son typage, sa simplicité, son intégration TypeScript et son support natif de MariaDB
+* Cluster Galera utilisé pour garantir disponibilité et cohérence
+
+---
+
+## ✅ Contraintes pédagogiques respectées
+
+* [x] Architecture modulaire avec DDD simplifié
+* [x] KISS : logique métier minimaliste et claire
+* [x] Cluster Galera simulé en local avec bascule testable
+* [x] Prisma avec logique métier isolée
+* [x] Routes testables facilement
+
+---
+
+## 🧪 Pour aller plus loin (facultatif)
+
+* Ajouter du TDD avec `Vitest`
+* Monitoring de l’état du cluster Galera
+* UI React pour réserver depuis le navigateur
+
+---
+
+Projet réalisé par : **\OMRI Boubaker** — IPSSI — 2025
+
+
