@@ -141,16 +141,6 @@ Réponse attendue :
 * [x] Prisma avec logique métier isolée
 * [x] Routes testables facilement
 
----
-
-## 🧪 Pour aller plus loin (facultatif)
-
-* Ajouter du TDD avec `Vitest`
-* Monitoring de l’état du cluster Galera
-* UI React pour réserver depuis le navigateur
-
----
-
-Projet réalisé par : **\OMRI Boubaker** — IPSSI — 2025
+Projet réalisé par : **OMRI Boubaker** — IPSSI — 2025
 
 
