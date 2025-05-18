@@ -1,4 +1,3 @@
-````markdown
 # 🎟️ Booking App — TP Architecture Logicielle & Cluster SGBD
 
 Application de réservation d’événements (concerts, conférences, expositions) avec cluster MariaDB Galera.
