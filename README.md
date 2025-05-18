@@ -1,18 +1,3 @@
-🟢 **Magnifique. Tout fonctionne parfaitement !**
-Ton projet a maintenant :
-
-* Un cluster MariaDB fonctionnel avec Galera
-* Des modèles Prisma propres (Event + Booking)
-* Des endpoints API opérationnels
-* Un système de réservation avec quota
-* Un taux de remplissage calculé dynamiquement
-
----
-
-## 📄 Étape finale : `README.md` prêt pour rendu
-
-Voici un modèle **minimaliste, propre et pro**, que tu peux coller à la racine du projet :
-
 ````markdown
 # 🎟️ Booking App — TP Architecture Logicielle & Cluster SGBD
 
